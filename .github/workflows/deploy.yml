@@ -23,12 +23,12 @@ jobs:
 
       # Install Dependencies
       - name: Install dependencies
-        run: npm install
+        run: yarn install --frozen-lockfile
 
       # Build project
       - name: Build project
-        run: npm run build
-      
+        run: yarn build
+
       # Deploy to gh-pages
       - name: Deploy to gh-pages
         uses: peaceiris/actions-gh-pages@v3
