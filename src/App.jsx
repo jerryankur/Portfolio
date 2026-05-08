@@ -11,7 +11,9 @@ import {
 	MapPin,
 	Phone,
 	Rocket,
-	Sparkles
+	Sparkles,
+	User,
+	Users
 } from "lucide-react";
 
 // ============================================================
@@ -316,11 +318,24 @@ function SkillStrip() {
 // ---------- Projects (Draggable) ----------
 const projects = [
 	{
+		title: "Whale Monitoring System",
+		company: "Curiote",
+		period: "Mar 2026 — Apr 2026",
+		color: palette.red,
+		rotate: -2,
+		team: "Solo",
+		tags: ["React", "Django", "Microservices", "Blockchain", "PostgreSQL"],
+		blurb: "Architected and built a real-time whale monitoring system for Bitcoin and Ethereum blockchains. Set up full node infrastructure for both chains, designed the microservices pipeline, and delivered end-to-end — from on-chain data ingestion to alert-driven dashboards.",
+		highlight: "Full-node blockchain infrastructure",
+		link: "https://curiote.com",
+	},
+	{
 		title: "Morphle Cloud & Scanners",
 		company: "Morphle Labs · YC W20",
 		period: "Dec 2021 — Feb 2023",
 		color: palette.orange,
 		rotate: -3,
+		team: "2 Engineers",
 		tags: ["React", "Django", "Computer Vision", "AWS"],
 		blurb: "Built complete frontend & backend for AI-enabled robotic slide scanners. Created 2D map-based interfaces that stitch microscopic images into whole-slide scans. Wrote camera/motor wrappers, microservices, real-time AI detection.",
 		highlight: "Helped drive revenue past $1M",
@@ -332,6 +347,7 @@ const projects = [
 		period: "Feb 2023 — May 2025",
 		color: palette.red,
 		rotate: 2,
+		team: "3 Engineers",
 		tags: ["Angular", "Spring", "Java", "AWS"],
 		blurb: "Built configurable, scalable cloud platform that lets medical devices centralize data and leverage cloud tech. Full-stack from architecture to UI.",
 		highlight: "FDA-context medical infrastructure",
@@ -343,6 +359,7 @@ const projects = [
 		period: "Feb 2023 — Current",
 		color: palette.yellow,
 		rotate: -1.5,
+		team: "Solo",
 		tags: ["Angular", "Spring", "TypeScript"],
 		blurb: "Built scalable widget plug-in framework letting third-party developers create and integrate custom widgets into our cloud product — accelerating feature expansion.",
 		highlight: "Ecosystem-grade extensibility",
@@ -354,6 +371,7 @@ const projects = [
 		period: "Aug 2024 — Dec 2024",
 		color: palette.orange,
 		rotate: 3,
+		team: "Solo",
 		tags: ["React", "Vite", "Django", "ChartIQ"],
 		blurb: "Built production trading UI with ChartIQ — futures prices, fundamental data series, multiple report views. Integrated data sources, deployed to prod.",
 		highlight: "Live in production",
@@ -365,6 +383,7 @@ const projects = [
 		period: "Jun 2021 — Dec 2021",
 		color: palette.red,
 		rotate: -2.5,
+		team: "Solo",
 		tags: ["Python", "Streamlit", "Plotly", "Heroku"],
 		blurb: "End-to-end on-chain analytics — scraped Blockchair, tracked top 100 richest BTC wallets, real-time Streamlit dashboard with automated CI/CD.",
 		highlight: "Continuous deployment to cloud",
@@ -376,6 +395,7 @@ const projects = [
 		period: "Jan 2021 — Jun 2021",
 		color: palette.yellow,
 		rotate: 1.5,
+		team: "Solo",
 		tags: ["Azure ML", "Python", "Plotly Dash"],
 		blurb: "Built ML models on Azure ML, managed full ML project lifecycle, shipped analytical dashboards on cloud with Plotly Dash.",
 		highlight: "End-to-end ML lifecycle",
@@ -404,7 +424,15 @@ function ProjectCard({project, index}) {
 			}}
 		>
 			<div className="flex items-start justify-between gap-4">
-				<div className="text-xs font-black uppercase tracking-widest opacity-80">{project.period}</div>
+				<div className="flex items-center gap-3">
+					<div className="text-xs font-black uppercase tracking-widest opacity-80">{project.period}</div>
+					<div
+						className="flex items-center gap-1 rounded-full border-2 px-2.5 py-0.5 text-[10px] font-black uppercase tracking-widest"
+						style={{borderColor: palette.ink, opacity: 0.8}}>
+						{project.team === "Solo" ? <User size={10}/> : <Users size={10}/>}
+						{project.team}
+					</div>
+				</div>
 				<div className="rounded-full border-2 px-3 py-0.5 text-[10px] font-black uppercase tracking-widest"
 				     style={{borderColor: palette.ink}}>
 					{String(index + 1).padStart(2, "0")}
