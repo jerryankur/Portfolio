@@ -186,7 +186,7 @@ function Hero() {
 						initial={{opacity: 0, x: 50}} animate={{opacity: 1, x: 0}}
 						transition={{delay: 0.35, duration: 0.8}}
 						className="block"
-						style={{color: palette.orange}}
+						style={{color: palette.ink}}
 					>
 						Dwivedi<span style={{color: palette.red}}>.</span>
 					</motion.span>
@@ -383,7 +383,6 @@ const projects = [
 ];
 
 function ProjectCard({project, index}) {
-	const constraintsRef = useRef(null);
 	return (
 		<motion.div
 			drag
@@ -654,6 +653,7 @@ function Contact() {
 				setStatus("error");
 			}
 		} catch (err) {
+			console.error(err);
 			setStatus("error");
 		}
 	};
