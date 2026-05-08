@@ -1,6 +1,7 @@
 import React, {useEffect, useRef, useState} from "react";
 import {GitHubCalendar} from "react-github-calendar";
 import {AnimatePresence, motion, useMotionValue, useScroll, useSpring, useTransform} from "framer-motion";
+import {ETGArchDiagram, MorphleArchDiagram, WhaleArchDiagram} from "./ArchitectureDiagrams";
 import {
 	ArrowUpRight,
 	CalendarClock,
@@ -346,6 +347,7 @@ const projects = [
 				"CI/CD pipeline with GitHub Actions — automated tests on PostgreSQL 16 + Redis, SSH deployment to production, build and start scripts.",
 			],
 			architecture: "Django ASGI backend (Daphne) serving both HTTP REST APIs and WebSocket connections. Five microservices run as dedicated async threads: ETHWhaleService subscribes to Ethereum node via WebSocket (newHeads + ERC20 Transfer logs), BTCWhaleService subscribes via ZMQ (hashblock). Both feed detected whale transactions into PostgreSQL with atomic writes, then broadcast confirmed transactions through Redis-backed Django Channels to all connected clients. TelegramService and XService consume from the same channel and batch-distribute alerts with rate-limit awareness. PriceService keeps live USD conversion rates. React + TypeScript frontend connects via WebSocket for real-time updates, with Redux Toolkit managing state and Material UI (Joy) for the interface.",
+			diagram: WhaleArchDiagram,
 			media: [],
 		},
 	},
@@ -376,6 +378,7 @@ const projects = [
 				"CI/CD pipeline with GitHub Actions — automated deployment to Elastic Beanstalk on push to master, with AWS credentials managed via secrets.",
 			],
 			architecture: "React + TypeScript SPA (Vite) with Redux Toolkit for state management, communicating via REST APIs to a Django + DRF backend. ChartIQ 9.4 handles all charting with custom plugins for data feeding (QuoteFeed), symbol search (LookupDriver), and trade execution (TFC). The backend runs a simulation engine that processes orders against historical OHLCV data — market orders fill immediately with randomized slippage, limit/stop orders match against daily High/Low on date progression. PostgreSQL stores all market data, orders, trades, and simulation state. Reports and chart view configs persist to S3. Nginx reverse proxy routes API traffic to Django (port 8000) and serves the React SPA. Deployed on AWS Elastic Beanstalk with GitHub Actions CI/CD.",
+			diagram: ETGArchDiagram,
 			media: [],
 		},
 	},
@@ -440,6 +443,7 @@ const projects = [
 				"Dockerized the entire stack — Django, MySQL, Redis, custom OpenCV 3.2 build from source, with environment-based settings switching between offline (local scanner) and cloud deployment modes.",
 			],
 			architecture: "Multi-tier system: robotic scanners run Scano (Java REST server) on local IP, Django backend proxies all hardware commands and manages slide lifecycle, React SPA renders scans via OpenLayers with pyramid tile layers. Image processing pipeline runs server-side — SURF-based stitching computes displacement vectors between adjacent tiles, then the tiling engine builds multi-zoom pyramids (256x256 tiles). Django Channels + Redis handle real-time WebSocket sync for annotations and scan progress. A Flask relay server bridges on-premise scanners to Morphle Cloud (Google Cloud Run gateway) with async TIFF conversion and upload deduplication. AI services run as separate Flask microservices for blur detection and cell classification. MySQL stores all metadata, Redis handles caching and task queues, S3/GCS for image storage.",
+			diagram: MorphleArchDiagram,
 			media: [],
 		},
 	},
@@ -571,6 +575,12 @@ function ProjectDetailModal({project, onClose}) {
 						<p className="mt-3 text-base leading-relaxed" style={{fontFamily: '"Inter", sans-serif'}}>
 							{project.details.architecture}
 						</p>
+						{project.details.diagram && (
+							<div className="mt-6 overflow-x-auto rounded-2xl border-2 bg-white p-4 md:p-6"
+							     style={{borderColor: palette.ink}}>
+								{React.createElement(project.details.diagram)}
+							</div>
+						)}
 					</div>
 				)}
 
