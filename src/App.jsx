@@ -185,7 +185,7 @@ function Hero() {
 					<motion.span
 						initial={{opacity: 0, x: 50}} animate={{opacity: 1, x: 0}}
 						transition={{delay: 0.35, duration: 0.8}}
-						className="block italic"
+						className="block"
 						style={{color: palette.orange}}
 					>
 						Dwivedi<span style={{color: palette.red}}>.</span>
