@@ -1,4 +1,5 @@
 import React, {useEffect, useRef, useState} from "react";
+import {GitHubCalendar} from "react-github-calendar";
 import {AnimatePresence, motion, useMotionValue, useScroll, useSpring, useTransform} from "framer-motion";
 import {
 	ArrowUpRight,
@@ -551,6 +552,83 @@ function Timeline() {
 	);
 }
 
+// ---------- GitHub Activity ----------
+function GitHubActivity() {
+	const currentYear = new Date().getFullYear();
+	const years = Array.from({length: 5}, (_, i) => currentYear - i);
+	const [selectedYear, setSelectedYear] = useState(undefined);
+	const theme = {
+		dark: ["#382010", "#FF6B1A33", "#FF6B1A77", "#FF6B1ABB", "#FF6B1A"],
+	};
+	return (
+		<section className="relative py-24 md:py-32" style={{background: palette.ink}}>
+			<div className="px-8 md:px-16">
+				<div className="mb-16">
+					<div className="text-xs font-bold uppercase tracking-widest" style={{color: palette.yellow}}>
+						04 · GitHub Activity
+					</div>
+					<h2 className="mt-4 font-black leading-none tracking-tighter" style={{
+						fontFamily: '"Fraunces", serif',
+						fontSize: "clamp(2.5rem, 7vw, 6rem)",
+						color: palette.bg,
+					}}>
+						I <span className="italic" style={{color: palette.orange}}>ship</span> consistently.
+					</h2>
+				</div>
+				<div className="mb-4 flex flex-wrap gap-2">
+					{[undefined, ...years].map((year) => (
+						<button
+							key={year ?? "last"}
+							onClick={() => setSelectedYear(year)}
+							className="rounded-full px-4 py-1.5 text-xs font-bold uppercase tracking-wider transition-colors"
+							style={{
+								background: selectedYear === year ? palette.orange : "rgba(255,244,230,0.08)",
+								color: selectedYear === year ? palette.ink : palette.bg,
+								border: `1.5px solid ${selectedYear === year ? palette.orange : "rgba(255,244,230,0.15)"}`,
+							}}
+						>
+							{year ?? "Last Year"}
+						</button>
+					))}
+				</div>
+				<motion.div
+					initial={{opacity: 0, y: 40}}
+					whileInView={{opacity: 1, y: 0}}
+					viewport={{once: true}}
+					transition={{duration: 0.6}}
+					className="overflow-x-auto rounded-3xl border-[3px] p-6 md:p-8"
+					style={{borderColor: palette.orange, background: "rgba(255,244,230,0.05)"}}
+				>
+					<GitHubCalendar
+						key={selectedYear ?? "last"}
+						username="jerryankur"
+						year={selectedYear}
+						colorScheme="dark"
+						theme={theme}
+						blockSize={14}
+						blockMargin={4}
+						fontSize={14}
+						style={{width: "100%", color: palette.bg}}
+					/>
+				</motion.div>
+				<div className="mt-6 flex items-center gap-3">
+					<a
+						href="https://github.com/jerryankur"
+						target="_blank"
+						rel="noreferrer"
+						data-cursor="repos"
+						className="group inline-flex items-center gap-2 text-sm font-bold uppercase tracking-widest transition-colors hover:text-orange-400"
+						style={{color: palette.yellow}}
+					>
+						<Github size={16}/> View full profile
+						<ArrowUpRight size={14} className="transition-transform group-hover:rotate-45"/>
+					</a>
+				</div>
+			</div>
+		</section>
+	);
+}
+
 // ---------- Beyond Code ----------
 function BeyondCode() {
 	const items = [
@@ -564,7 +642,7 @@ function BeyondCode() {
 			<div className="px-8 md:px-16">
 				<div className="mb-16">
 					<div className="text-xs font-bold uppercase tracking-widest" style={{color: palette.red}}>
-						04 · Beyond the code
+						05 · Beyond the code
 					</div>
 					<h2 className="mt-4 font-black leading-none tracking-tighter" style={{
 						fontFamily: '"Fraunces", serif',
@@ -695,7 +773,7 @@ function Contact() {
 			<div className="relative grid gap-16 px-8 md:grid-cols-12 md:px-16">
 				<div className="md:col-span-5">
 					<div className="text-xs font-bold uppercase tracking-widest" style={{color: palette.yellow}}>
-						05 · Let's build
+						06 · Let's build
 					</div>
 					<h2 className="mt-4 font-black leading-none tracking-tighter"
 					    style={{fontFamily: '"Fraunces", serif', fontSize: "clamp(2.5rem, 6vw, 5rem)"}}>
@@ -886,6 +964,7 @@ export default function Portfolio() {
 			<About/>
 			<Work/>
 			<Timeline/>
+			<GitHubActivity/>
 			<BeyondCode/>
 			<Contact/>
 			<Footer/>
