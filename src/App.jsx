@@ -757,7 +757,7 @@ const timeline = [
 	{year: "2021", title: "On-Chain Analyst", org: "Jarvis Labs LLC", note: "Bitcoin whale tracking dashboards"},
 	{year: "2021", title: "ML Ops Engineer", org: "SG Analytics", note: "Azure ML lifecycle & dashboards"},
 	{
-		year: "2017–21",
+		year: "2018–22",
 		title: "B.Tech, ECE · CPI 9.0",
 		org: "IIITDM",
 		note: "Indian Institute of Information Technology, Design & Manufacturing"
