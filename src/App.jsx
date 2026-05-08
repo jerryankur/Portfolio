@@ -1,16 +1,16 @@
 import React, {useEffect, useRef, useState} from "react";
 import {AnimatePresence, motion, useMotionValue, useScroll, useSpring, useTransform} from "framer-motion";
 import {
-  ArrowUpRight,
-  CalendarClock,
-  ChevronDown,
-  Github,
-  Linkedin,
-  Mail,
-  MapPin,
-  Phone,
-  Rocket,
-  Sparkles
+	ArrowUpRight,
+	CalendarClock,
+	ChevronDown,
+	Github,
+	Linkedin,
+	Mail,
+	MapPin,
+	Phone,
+	Rocket,
+	Sparkles
 } from "lucide-react";
 
 // ============================================================
@@ -120,7 +120,7 @@ function Hero() {
 		<section ref={containerRef} className="relative min-h-screen overflow-hidden" style={{background: palette.bg}}>
 			{/* Subtle grid texture — barely visible, just adds atmosphere */}
 			<div
-				className="absolute inset-0 opacity-[0.025]"
+				className="absolute inset-0 opacity-[0.08]"
 				style={{
 					backgroundImage: `linear-gradient(${palette.ink} 1px, transparent 1px), linear-gradient(90deg, ${palette.ink} 1px, transparent 1px)`,
 					backgroundSize: "80px 80px",
