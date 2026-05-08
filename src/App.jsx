@@ -5,6 +5,7 @@ import {
 	ArrowUpRight,
 	CalendarClock,
 	ChevronDown,
+	Eye,
 	Github,
 	Linkedin,
 	Mail,
@@ -13,7 +14,8 @@ import {
 	Rocket,
 	Sparkles,
 	User,
-	Users
+	Users,
+	X
 } from "lucide-react";
 
 // ============================================================
@@ -328,6 +330,24 @@ const projects = [
 		blurb: "Architected and built a real-time whale monitoring system for Bitcoin and Ethereum blockchains. Set up full node infrastructure for both chains, designed the microservices pipeline, and delivered end-to-end — from on-chain data ingestion to alert-driven dashboards.",
 		highlight: "Full-node blockchain infrastructure",
 		link: "https://curiote.com",
+		details: {
+			description: [
+				"Real-time whale transaction detection across Bitcoin and Ethereum mainnet — tracking large movements of BTC, ETH, and 12+ major ERC20 tokens (USDT, USDC, WBTC, DAI, LINK, and more).",
+				"Set up and configured full Bitcoin Core and Ethereum (Geth) nodes from scratch — RPC, WebSocket subscriptions, ZMQ block notifications, and cookie-based auth.",
+				"Built async microservices architecture — dedicated services for ETH monitoring, BTC monitoring, price feeds, Telegram alerts, and X/Twitter alerts, each running in isolated threads with their own event loops and task queues.",
+				"Implemented smart whale detection with configurable thresholds per token (e.g., 100+ BTC, 1000+ ETH, 5M+ USDT) with automatic USD conversion via live price feeds.",
+				"Transaction confirmation pipeline with sliding-window block tracking — 6 confirmations for BTC, 12 for ETH — with full blockchain reorg detection and status rollback.",
+				"Live Telegram bot alerts with intelligent message batching (respecting 4096-char limit), rate-limit handling, and retry-after backoff.",
+				"Automated X/Twitter posting of whale alerts via OAuth1 + API v2, with 280-char formatting, rate-limit header parsing, and calculated cooldown.",
+				"Real-time WebSocket streaming to the frontend via Django Channels + Redis — clients see whale alerts the moment they're confirmed, with auto-reconnect and connection status tracking.",
+				"Built the full React + TypeScript dashboard — live alert feed with severity filtering, date range picker, token/wallet filters, detailed transaction drill-down with block explorer links, and copy-to-clipboard utilities.",
+				"Multi-method authentication — email/password, Google OAuth, Twitter OAuth, and Web3 wallet signing (MetaMask, WalletConnect) via Reown AppKit.",
+				"Historical backfill on service restart — automatically detects gaps and replays missed blocks (batch of 500 for ETH, sequential for BTC) before resuming live monitoring.",
+				"CI/CD pipeline with GitHub Actions — automated tests on PostgreSQL 16 + Redis, SSH deployment to production, build and start scripts.",
+			],
+			architecture: "Django ASGI backend (Daphne) serving both HTTP REST APIs and WebSocket connections. Five microservices run as dedicated async threads: ETHWhaleService subscribes to Ethereum node via WebSocket (newHeads + ERC20 Transfer logs), BTCWhaleService subscribes via ZMQ (hashblock). Both feed detected whale transactions into PostgreSQL with atomic writes, then broadcast confirmed transactions through Redis-backed Django Channels to all connected clients. TelegramService and XService consume from the same channel and batch-distribute alerts with rate-limit awareness. PriceService keeps live USD conversion rates. React + TypeScript frontend connects via WebSocket for real-time updates, with Redux Toolkit managing state and Material UI (Joy) for the interface.",
+			media: [],
+		},
 	},
 	{
 		title: "Morphle Cloud & Scanners",
@@ -340,6 +360,11 @@ const projects = [
 		blurb: "Built complete frontend & backend for AI-enabled robotic slide scanners. Created 2D map-based interfaces that stitch microscopic images into whole-slide scans. Wrote camera/motor wrappers, microservices, real-time AI detection.",
 		highlight: "Helped drive revenue past $1M",
 		link: "https://morphlelabs.com",
+		details: {
+			description: "",
+			architecture: "",
+			media: [],
+		},
 	},
 	{
 		title: "Galen Cloud Platform",
@@ -352,6 +377,11 @@ const projects = [
 		blurb: "Built configurable, scalable cloud platform that lets medical devices centralize data and leverage cloud tech. Full-stack from architecture to UI.",
 		highlight: "FDA-context medical infrastructure",
 		link: "#",
+		details: {
+			description: "",
+			architecture: "",
+			media: [],
+		},
 	},
 	{
 		title: "Widget Plug-in Framework",
@@ -364,6 +394,11 @@ const projects = [
 		blurb: "Built scalable widget plug-in framework letting third-party developers create and integrate custom widgets into our cloud product — accelerating feature expansion.",
 		highlight: "Ecosystem-grade extensibility",
 		link: "#",
+		details: {
+			description: "",
+			architecture: "",
+			media: [],
+		},
 	},
 	{
 		title: "ETG Trading Interface",
@@ -376,6 +411,11 @@ const projects = [
 		blurb: "Built production trading UI with ChartIQ — futures prices, fundamental data series, multiple report views. Integrated data sources, deployed to prod.",
 		highlight: "Live in production",
 		link: "#",
+		details: {
+			description: "",
+			architecture: "",
+			media: [],
+		},
 	},
 	{
 		title: "On-Chain Bitcoin Analytics",
@@ -388,6 +428,11 @@ const projects = [
 		blurb: "End-to-end on-chain analytics — scraped Blockchair, tracked top 100 richest BTC wallets, real-time Streamlit dashboard with automated CI/CD.",
 		highlight: "Continuous deployment to cloud",
 		link: "#",
+		details: {
+			description: "",
+			architecture: "",
+			media: [],
+		},
 	},
 	{
 		title: "ML Ops Dashboards",
@@ -400,71 +445,223 @@ const projects = [
 		blurb: "Built ML models on Azure ML, managed full ML project lifecycle, shipped analytical dashboards on cloud with Plotly Dash.",
 		highlight: "End-to-end ML lifecycle",
 		link: "#",
+		details: {
+			description: "",
+			architecture: "",
+			media: [],
+		},
 	},
 ];
 
-function ProjectCard({project, index}) {
+function ProjectDetailModal({project, onClose}) {
+	useEffect(() => {
+		const handleKey = (e) => e.key === "Escape" && onClose();
+		document.body.style.overflow = "hidden";
+		window.addEventListener("keydown", handleKey);
+		return () => {
+			document.body.style.overflow = "";
+			window.removeEventListener("keydown", handleKey);
+		};
+	}, [onClose]);
+
 	return (
 		<motion.div
-			drag
-			dragConstraints={{left: -100, right: 100, top: -50, bottom: 50}}
-			dragElastic={0.3}
-			whileDrag={{scale: 1.05, rotate: 0, zIndex: 50, cursor: "grabbing"}}
-			whileHover={{scale: 1.02, rotate: 0}}
-			initial={{opacity: 0, y: 60, rotate: project.rotate}}
-			whileInView={{opacity: 1, y: 0, rotate: project.rotate}}
-			viewport={{once: true, margin: "-50px"}}
-			transition={{duration: 0.6, delay: index * 0.05}}
-			data-cursor="drag me"
-			className="relative cursor-grab select-none rounded-3xl border-[3px] p-7 shadow-[8px_8px_0px_0px_#1A0F08] md:p-8"
-			style={{
-				background: project.color,
-				borderColor: palette.ink,
-				color: palette.ink,
-			}}
+			initial={{opacity: 0}}
+			animate={{opacity: 1}}
+			exit={{opacity: 0}}
+			className="fixed inset-0 z-[200] flex items-center justify-center p-4 md:p-8"
+			style={{background: "rgba(26,15,8,0.85)", backdropFilter: "blur(8px)"}}
+			onClick={onClose}
 		>
-			<div className="flex items-start justify-between gap-4">
-				<div className="flex items-center gap-3">
-					<div className="text-xs font-black uppercase tracking-widest opacity-80">{project.period}</div>
-					<div
-						className="flex items-center gap-1 rounded-full border-2 px-2.5 py-0.5 text-[10px] font-black uppercase tracking-widest"
-						style={{borderColor: palette.ink, opacity: 0.8}}>
+			<motion.div
+				initial={{opacity: 0, y: 40, scale: 0.95}}
+				animate={{opacity: 1, y: 0, scale: 1}}
+				exit={{opacity: 0, y: 40, scale: 0.95}}
+				transition={{duration: 0.3}}
+				onClick={(e) => e.stopPropagation()}
+				className="relative max-h-[90vh] w-full max-w-4xl overflow-y-auto rounded-3xl border-[3px] p-8 md:p-12"
+				style={{background: palette.bg, borderColor: palette.ink, color: palette.ink}}
+			>
+				<button
+					onClick={onClose}
+					className="absolute right-4 top-4 rounded-full border-2 p-2 transition-colors hover:bg-black/10"
+					style={{borderColor: palette.ink}}
+				>
+					<X size={18}/>
+				</button>
+
+				<div className="mb-2 text-xs font-black uppercase tracking-widest opacity-60">{project.period}</div>
+				<div className="flex items-center gap-2 text-sm font-bold uppercase tracking-wider opacity-90">
+					{project.company}
+					{project.link && project.link !== "#" && (
+						<a href={project.link} target="_blank" rel="noreferrer"
+						   className="opacity-60 transition-opacity hover:opacity-100">
+							<ArrowUpRight size={14}/>
+						</a>
+					)}
+				</div>
+				<h2 className="mt-3 font-black leading-tight tracking-tight"
+				    style={{fontFamily: '"Fraunces", serif', fontSize: "clamp(2rem, 4vw, 3rem)"}}>
+					{project.title}
+				</h2>
+
+				<div className="mt-4 flex flex-wrap gap-2">
+					{project.tags.map((t) => (
+						<span key={t} className="rounded-full border-2 px-3 py-1 text-xs font-bold"
+						      style={{borderColor: palette.ink, background: project.color + "33"}}>
+							{t}
+						</span>
+					))}
+					<span className="flex items-center gap-1 rounded-full border-2 px-3 py-1 text-xs font-bold"
+					      style={{borderColor: palette.ink}}>
 						{project.team === "Solo" ? <User size={10}/> : <Users size={10}/>}
 						{project.team}
+					</span>
+				</div>
+
+				<div className="mt-8">
+					<h3 className="text-sm font-black uppercase tracking-widest" style={{color: palette.red}}>About</h3>
+					{Array.isArray(project.details?.description) && project.details.description.length > 0 ? (
+						<ul className="mt-3 space-y-3" style={{fontFamily: '"Inter", sans-serif'}}>
+							{project.details.description.map((point, i) => (
+								<li key={i} className="flex gap-3 text-base leading-relaxed">
+									<span className="mt-1.5 h-2 w-2 shrink-0 rounded-full"
+									      style={{background: project.color}}/>
+									{point}
+								</li>
+							))}
+						</ul>
+					) : (
+						<p className="mt-3 text-base leading-relaxed" style={{fontFamily: '"Inter", sans-serif'}}>
+							{project.details?.description || project.blurb}
+						</p>
+					)}
+				</div>
+
+				{project.details?.architecture && (
+					<div className="mt-8">
+						<h3 className="text-sm font-black uppercase tracking-widest"
+						    style={{color: palette.red}}>Architecture</h3>
+						<p className="mt-3 text-base leading-relaxed" style={{fontFamily: '"Inter", sans-serif'}}>
+							{project.details.architecture}
+						</p>
+					</div>
+				)}
+
+				{project.details?.media?.length > 0 && (
+					<div className="mt-8">
+						<h3 className="mb-4 text-sm font-black uppercase tracking-widest"
+						    style={{color: palette.red}}>Screenshots & Demos</h3>
+						<div className="grid gap-4 md:grid-cols-2">
+							{project.details.media.map((item, i) => (
+								<div key={i} className="overflow-hidden rounded-2xl border-2"
+								     style={{borderColor: palette.ink}}>
+									{item.type === "video" ? (
+										<video src={item.src} controls className="w-full" poster={item.poster}/>
+									) : (
+										<img src={item.src} alt={item.alt || project.title} className="w-full"/>
+									)}
+									{item.caption && (
+										<div className="border-t-2 px-4 py-2 text-xs font-bold"
+										     style={{borderColor: palette.ink}}>
+											{item.caption}
+										</div>
+									)}
+								</div>
+							))}
+						</div>
+					</div>
+				)}
+
+				<div className="mt-8 flex items-center gap-2 border-t-2 pt-6 text-sm font-bold"
+				     style={{borderColor: palette.ink}}>
+					<Sparkles size={14} style={{color: palette.orange}}/> {project.highlight}
+				</div>
+			</motion.div>
+		</motion.div>
+	);
+}
+
+function ProjectCard({project, index}) {
+	const [showDetail, setShowDetail] = useState(false);
+	return (
+		<>
+			<motion.div
+				drag
+				dragConstraints={{left: -100, right: 100, top: -50, bottom: 50}}
+				dragElastic={0.3}
+				whileDrag={{scale: 1.05, rotate: 0, zIndex: 50, cursor: "grabbing"}}
+				whileHover={{scale: 1.02, rotate: 0}}
+				initial={{opacity: 0, y: 60, rotate: project.rotate}}
+				whileInView={{opacity: 1, y: 0, rotate: project.rotate}}
+				viewport={{once: true, margin: "-50px"}}
+				transition={{duration: 0.6, delay: index * 0.05}}
+				data-cursor="drag me"
+				className="relative cursor-grab select-none rounded-3xl border-[3px] p-7 shadow-[8px_8px_0px_0px_#1A0F08] md:p-8"
+				style={{
+					background: project.color,
+					borderColor: palette.ink,
+					color: palette.ink,
+				}}
+			>
+				<div className="flex items-start justify-between gap-4">
+					<div className="flex items-center gap-3">
+						<div className="text-xs font-black uppercase tracking-widest opacity-80">{project.period}</div>
+						<div
+							className="flex items-center gap-1 rounded-full border-2 px-2.5 py-0.5 text-[10px] font-black uppercase tracking-widest"
+							style={{borderColor: palette.ink, opacity: 0.8}}>
+							{project.team === "Solo" ? <User size={10}/> : <Users size={10}/>}
+							{project.team}
+						</div>
+					</div>
+					<div className="rounded-full border-2 px-3 py-0.5 text-[10px] font-black uppercase tracking-widest"
+					     style={{borderColor: palette.ink}}>
+						{String(index + 1).padStart(2, "0")}
 					</div>
 				</div>
-				<div className="rounded-full border-2 px-3 py-0.5 text-[10px] font-black uppercase tracking-widest"
+				{project.link && project.link !== "#" ? (
+					<a href={project.link} target="_blank" rel="noreferrer"
+					   className="group mt-2 inline-flex items-center gap-1.5 text-sm font-bold uppercase tracking-wider opacity-90 transition-opacity hover:opacity-70"
+					   data-cursor="visit">
+						{project.company} <ArrowUpRight size={13}
+						                                className="transition-transform group-hover:rotate-45"/>
+					</a>
+				) : (
+					<div className="mt-2 text-sm font-bold uppercase tracking-wider opacity-90">{project.company}</div>
+				)}
+				<h3 className="mt-3 font-black leading-tight tracking-tight"
+				    style={{fontFamily: '"Fraunces", serif', fontSize: "clamp(1.5rem, 2.5vw, 2.25rem)"}}>
+					{project.title}
+				</h3>
+				<p className="mt-4 text-base leading-relaxed" style={{fontFamily: '"Inter", sans-serif'}}>
+					{project.blurb}
+				</p>
+				<div className="mt-5 flex flex-wrap gap-2">
+					{project.tags.map((t) => (
+						<span key={t} className="rounded-full border-2 bg-black/5 px-3 py-1 text-xs font-bold"
+						      style={{borderColor: palette.ink}}>
+							{t}
+						</span>
+					))}
+				</div>
+				<div className="mt-6 flex items-center justify-between border-t-2 pt-5"
 				     style={{borderColor: palette.ink}}>
-					{String(index + 1).padStart(2, "0")}
+					<div className="flex items-center gap-2 text-sm font-bold">
+						<Sparkles size={14}/> {project.highlight}
+					</div>
+					<button
+						onClick={() => setShowDetail(true)}
+						className="group inline-flex items-center gap-1.5 text-sm font-bold uppercase tracking-widest transition-opacity hover:opacity-70"
+						data-cursor="details"
+					>
+						<Eye size={14}/> Details
+					</button>
 				</div>
-			</div>
-			<div className="mt-2 text-sm font-bold uppercase tracking-wider opacity-90">{project.company}</div>
-			<h3 className="mt-3 font-black leading-tight tracking-tight"
-			    style={{fontFamily: '"Fraunces", serif', fontSize: "clamp(1.5rem, 2.5vw, 2.25rem)"}}>
-				{project.title}
-			</h3>
-			<p className="mt-4 text-base leading-relaxed" style={{fontFamily: '"Inter", sans-serif'}}>
-				{project.blurb}
-			</p>
-			<div className="mt-5 flex flex-wrap gap-2">
-				{project.tags.map((t) => (
-					<span key={t} className="rounded-full border-2 bg-black/5 px-3 py-1 text-xs font-bold"
-					      style={{borderColor: palette.ink}}>
-            {t}
-          </span>
-				))}
-			</div>
-			<div className="mt-6 flex items-center justify-between border-t-2 pt-5" style={{borderColor: palette.ink}}>
-				<div className="flex items-center gap-2 text-sm font-bold">
-					<Sparkles size={14}/> {project.highlight}
-				</div>
-				<a href={project.link} target="_blank" rel="noreferrer"
-				   className="group inline-flex items-center gap-1 text-sm font-bold uppercase tracking-widest"
-				   data-cursor="open">
-					Visit <ArrowUpRight size={14} className="transition-transform group-hover:rotate-45"/>
-				</a>
-			</div>
-		</motion.div>
+			</motion.div>
+			<AnimatePresence>
+				{showDetail && <ProjectDetailModal project={project} onClose={() => setShowDetail(false)}/>}
+			</AnimatePresence>
+		</>
 	);
 }
 
