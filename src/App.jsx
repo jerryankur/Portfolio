@@ -204,8 +204,8 @@ function Hero() {
 					style={{color: palette.ink, fontFamily: '"Inter", sans-serif'}}
 				>
 					I ship products from <em style={{color: palette.red}}>zero to one</em> at YC startups.
-					Built medical-device clouds, trading interfaces, AI-powered scanners.
-					Helped take Morphle Labs past <strong>$1M revenue</strong> as part of a tiny team.
+					Built medical-device clouds, trading interfaces, AI-powered scanners,
+					and blockchain infrastructure — <strong>tiny teams, real revenue</strong>.
 				</motion.p>
 
 				<motion.div
@@ -457,23 +457,6 @@ const projects = [
 		tags: ["Python", "Streamlit", "Plotly", "Heroku"],
 		blurb: "End-to-end on-chain analytics — scraped Blockchair, tracked top 100 richest BTC wallets, real-time Streamlit dashboard with automated CI/CD.",
 		highlight: "Continuous deployment to cloud",
-		link: "#",
-		details: {
-			description: "",
-			architecture: "",
-			media: [],
-		},
-	},
-	{
-		title: "ML Ops Dashboards",
-		company: "SG Analytics Pvt. Ltd.",
-		period: "Jan 2021 — Jun 2021",
-		color: palette.yellow,
-		rotate: 1.5,
-		team: "Solo",
-		tags: ["Azure ML", "Python", "Plotly Dash"],
-		blurb: "Built ML models on Azure ML, managed full ML project lifecycle, shipped analytical dashboards on cloud with Plotly Dash.",
-		highlight: "End-to-end ML lifecycle",
 		link: "#",
 		details: {
 			description: "",
