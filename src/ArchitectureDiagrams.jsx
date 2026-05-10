@@ -272,3 +272,73 @@ export function MorphleArchDiagram() {
 		</svg>
 	);
 }
+
+export function WalletArchDiagram() {
+	return (
+		<svg viewBox="0 0 720 400" className="w-full" style={{maxWidth: 720}}>
+			<SectionLabel x={20} y={20} label="Data Sources"/>
+			<Box x={20} y={30} w={120} h={50} label="Blockchair API" sub="BTC Transactions"
+			     fill={palette.yellow + "44"}/>
+			<Box x={155} y={30} w={120} h={50} label="Etherscan API" sub="ETH + ERC-20" fill={palette.yellow + "44"}/>
+			<Box x={290} y={30} w={120} h={50} label="Santiment API" sub="Hourly Prices" fill={palette.yellow + "44"}/>
+
+			<SectionLabel x={500} y={20} label="Scraping"/>
+			<Box x={500} y={30} w={200} h={50} label="Selenium + Undetected" sub="btc.com · etherscan · tether.to"
+			     fill={palette.orange + "22"}/>
+			<Box x={500} y={95} w={200} h={40} label="Bitbucket CSVs" sub="Top Wallet Lists" fill={palette.cream}/>
+
+			<Arrow x1={600} y1={80} x2={600} y2={95} label="store"/>
+
+			<SectionLabel x={20} y={115} label="Processing Layer"/>
+			<Box x={20} y={125} w={130} h={50} label="Pandas" sub="DataFrames · Transforms"
+			     fill={palette.orange + "33"}/>
+			<Box x={165} y={125} w={130} h={50} label="Transaction Filter" sub="Threshold · Inverse"
+			     fill={palette.orange + "33"}/>
+			<Box x={310} y={125} w={140} h={50} label="Price Correlation" sub="1h · 4h · 12h · 1d Δ"
+			     fill={palette.orange + "33"}/>
+
+			<Arrow x1={80} y1={80} x2={80} y2={125}/>
+			<Arrow x1={215} y1={80} x2={215} y2={125}/>
+			<Arrow x1={350} y1={80} x2={380} y2={125}/>
+			<Arrow x1={500} y1={115} x2={450} y2={140} dashed={true} label="wallet lists"/>
+
+			<Arrow x1={150} y1={150} x2={165} y2={150}/>
+			<Arrow x1={295} y1={150} x2={310} y2={150}/>
+
+			<SectionLabel x={20} y={210} label="Analytics Engine"/>
+			<Box x={20} y={220} w={140} h={50} label="Copy-Trade P&L" sub="Entry/Exit Timing"
+			     fill={palette.red + "22"}/>
+			<Box x={175} y={220} w={120} h={50} label="HODL Returns" sub="First → Last Price"
+			     fill={palette.red + "22"}/>
+			<Box x={310} y={220} w={140} h={50} label="Deposit / Withdrawal" sub="Classification Engine"
+			     fill={palette.red + "22"}/>
+
+			<Arrow x1={230} y1={175} x2={230} y2={220}/>
+			<Arrow x1={380} y1={175} x2={380} y2={220}/>
+
+			<SectionLabel x={20} y={305} label="Visualization"/>
+			<Box x={20} y={315} w={200} h={50} label="Plotly Interactive Chart" sub="Price + Tx Markers · Range Slider"
+			     fill={palette.bg} stroke={palette.orange}/>
+			<Box x={240} y={315} w={130} h={50} label="Wallet Tables" sub="Top 50–100 Wallets" fill={palette.bg}
+			     stroke={palette.orange}/>
+			<Box x={385} y={315} w={130} h={50} label="Metrics Panel" sub="P&L · HODL · Trade %" fill={palette.bg}
+			     stroke={palette.orange}/>
+
+			<Arrow x1={90} y1={270} x2={90} y2={315}/>
+			<Arrow x1={235} y1={270} x2={305} y2={315}/>
+			<Arrow x1={380} y1={270} x2={450} y2={315}/>
+
+			<SectionLabel x={500} y={175} label="Dashboard"/>
+			<Box x={500} y={185} w={200} h={50} label="Streamlit App" sub="Wide Layout · Sidebar" fill={palette.cream}/>
+
+			<SectionLabel x={500} y={270} label="Deployment"/>
+			<Box x={500} y={280} w={200} h={45} label="Heroku" sub="Single Dyno · Headless Chrome" fill="#E3F2FD"/>
+			<Box x={500} y={340} w={200} h={45} label="Bitbucket Pipelines" sub="Test → Build → Deploy" fill="#E3F2FD"/>
+
+			<Arrow x1={600} y1={235} x2={600} y2={280}/>
+			<Arrow x1={600} y1={325} x2={600} y2={340}/>
+
+			<SectionLabel x={20} y={390} label="Chains: BTC · ETH · USDT ERC-20 · Bitfinex Cold Wallets"/>
+		</svg>
+	);
+}

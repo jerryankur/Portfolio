@@ -1,7 +1,7 @@
 import React, {useEffect, useRef, useState} from "react";
 import {GitHubCalendar} from "react-github-calendar";
 import {AnimatePresence, motion, useMotionValue, useScroll, useSpring, useTransform} from "framer-motion";
-import {ETGArchDiagram, MorphleArchDiagram, WhaleArchDiagram} from "./ArchitectureDiagrams";
+import {ETGArchDiagram, MorphleArchDiagram, WalletArchDiagram, WhaleArchDiagram} from "./ArchitectureDiagrams";
 import {
 	ArrowUpRight,
 	CalendarClock,
@@ -448,19 +448,31 @@ const projects = [
 		},
 	},
 	{
-		title: "On-Chain Bitcoin Analytics",
+		title: "Whale Wallet Tracker",
 		company: "Jarvis Labs LLC",
 		period: "Jun 2021 — Dec 2021",
 		color: palette.red,
 		rotate: -2.5,
 		team: "Solo",
-		tags: ["Python", "Streamlit", "Plotly", "Heroku"],
-		blurb: "End-to-end on-chain analytics — scraped Blockchair, tracked top 100 richest BTC wallets, real-time Streamlit dashboard with automated CI/CD.",
-		highlight: "Continuous deployment to cloud",
+		tags: ["Python", "Streamlit", "Plotly", "Pandas", "Selenium", "Heroku", "Blockchair API", "Etherscan API"],
+		blurb: "Multi-chain whale wallet intelligence — tracked top richest wallets across BTC, ETH, and USDT, correlated transactions with price movements, and built copy-trading performance analytics.",
+		highlight: "Multi-chain whale intelligence",
 		link: "#",
 		details: {
-			description: "",
-			architecture: "",
+			description: [
+				"Built a multi-chain whale wallet tracker covering Bitcoin (top 50), Ethereum (top 100), USDT ERC-20 (top 50), and Bitfinex cold storage wallets — all in a single interactive dashboard.",
+				"Integrated three blockchain data APIs — Blockchair for BTC transactions, Etherscan for ETH and ERC-20 transfers, and Santiment for hourly price history across all supported chains.",
+				"Built anti-detection web scraping using Selenium + undetected-chromedriver to extract top wallet lists from btc.com, etherscan.io, and tether.to — bypassing JavaScript rendering and bot detection.",
+				"Interactive Plotly chart overlaying whale transaction markers on price history — deposits and withdrawals color-coded and sized by amount, with hover tooltips showing 1h/4h/12h/1d price changes after each transaction.",
+				"Copy-trading performance analysis — calculates both HODL returns and actual trading P&L based on wallet entry/exit timing, with different logic for native coins vs. stablecoins.",
+				"Threshold-based transaction filtering to cut through dust and noise — users set minimum transaction size to focus on significant whale movements only.",
+				"Inverse mode toggle for USDT analysis — flips deposit/withdrawal interpretation since stablecoin buy/sell logic is reversed relative to BTC/ETH.",
+				"Bitfinex cold wallet aggregation — tracks multiple known Bitfinex cold storage addresses with live balance fetching via Blockchair API.",
+				"Streamlit dashboard with wide layout — sidebar coin selector, top wallet tables, wallet address input for ad-hoc analysis of any public address on supported chains.",
+				"CI/CD pipeline with Bitbucket Pipelines — automated testing, build artifact creation, and Heroku deployment on push to master.",
+			],
+			architecture: "Stateless API aggregation architecture — no database, all data fetched on-demand. Streamlit app queries Blockchair (BTC), Etherscan (ETH/ERC-20), and Santiment (price history) APIs at runtime. Top wallet lists scraped periodically via Jupyter notebooks using Selenium with undetected-chromedriver, stored as CSVs in Bitbucket, and loaded by the app via environment variable URLs. Pandas DataFrames handle all data transformation — transaction classification, threshold filtering, time normalization to hour boundaries, and profit calculation. Plotly renders interactive time-series charts with transaction overlays. Deployed on Heroku single dyno with Bitbucket Pipelines CI/CD.",
+			diagram: WalletArchDiagram,
 			media: [],
 		},
 	},
@@ -737,7 +749,7 @@ const timeline = [
 		org: "Morphle Labs · YC W20",
 		note: "AI scanners, $1M+ revenue era"
 	},
-	{year: "2021", title: "On-Chain Analyst", org: "Jarvis Labs LLC", note: "Bitcoin whale tracking dashboards"},
+	{year: "2021", title: "On-Chain Analyst", org: "Jarvis Labs LLC", note: "Multi-chain whale wallet intelligence"},
 	{year: "2021", title: "ML Ops Engineer", org: "SG Analytics", note: "Azure ML lifecycle & dashboards"},
 	{
 		year: "2018–22",
