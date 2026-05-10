@@ -6,6 +6,8 @@ import {
 	ArrowUpRight,
 	CalendarClock,
 	ChevronDown,
+	ChevronLeft,
+	ChevronRight,
 	Eye,
 	Github,
 	Linkedin,
@@ -277,8 +279,8 @@ function About() {
 						frontend and most of the backend for AI-enabled robotic slide scanners that are now used by
 						researchers and pathologists. At <strong style={{color: palette.orange}}>Galen Data</strong>, I
 						built a medical-device cloud platform from scratch. At <strong
-						style={{color: palette.orange}}>ETG</strong>, I built a production trading interface with
-						real-time data feeds.
+						style={{color: palette.orange}}>ETG</strong>, I built a trader training simulator that scores
+						commodity traders on risk-adjusted performance.
 					</p>
 					<p>
 						I like the <em>zero-to-one</em> phase — the part where the product doesn't exist yet and someone
@@ -352,34 +354,89 @@ const projects = [
 		},
 	},
 	{
-		title: "ETG Trading Interface",
+		title: "Trader Training Simulator",
 		company: "ETG Commodities",
 		period: "Aug 2024 — Dec 2024",
 		color: palette.orange,
 		rotate: 3,
 		team: "Solo",
 		tags: ["React", "Vite", "Django", "ChartIQ", "Redux Toolkit", "PostgreSQL", "AWS EB", "S3", "ECharts"],
-		blurb: "Built production trading UI with ChartIQ — futures prices, fundamental data series, multiple report views. Integrated data sources, deployed to prod.",
+		blurb: "Built a commodity trader training simulator — traders play through historical market scenarios day-by-day, place real order types, and get scored on risk-adjusted performance metrics like Sharpe, Sortino, and hit ratio.",
 		highlight: "Live in production",
 		link: "#",
 		details: {
 			description: [
-				"Built a full-stack trading simulation platform from scratch — interactive charting, order execution, risk management, and post-trade analytics, all solo.",
-				"Integrated ChartIQ 9.4 with custom plugins — multi-chart grid layouts, Trading From Chart (TFC) for visual order placement, SignalIQ for custom indicators, and 50+ built-in technical studies.",
-				"Implemented a complete order engine supporting market, limit, stop, and MIT orders — plus advanced bracket orders with One-Triggers-Other (OTO) and One-Cancels-Other (OCO) logic.",
-				"Built a date-progression trading simulator — users advance through historical market data day-by-day, with limit/stop orders executing against real High/Low prices and slippage simulation.",
-				"Value-at-Risk (VAR) and notional exposure tracking — calculated using 20-day historical volatility at 95% confidence, with automatic position liquidation if capital limits are breached.",
-				"Custom QuoteFeed adapter that lazy-loads OHLCV data from the backend, caches fetched ranges per symbol, and streams new data as simulation progress advances.",
-				"Post-simulation analytics dashboard with ECharts — Sharpe ratio, Sortino ratio, Calmar ratio, hit ratio, profit factor, mean trade duration, and per-product P&L breakdowns.",
-				"External economic reports integrated into the trading timeline — earnings calendars, fundamental data series stored in S3, navigable by year/month within the chart view.",
-				"Multi-product futures trading with contract expiry management — automatic order cancellation on expiry, symbol lookup with autocomplete, and per-contract pip values and tick sizes.",
-				"Full authentication system with token-based auth, user-scoped simulations, and role-based permissions ensuring traders can only access their own positions and orders.",
-				"Deployed to AWS Elastic Beanstalk with Nginx reverse proxy — React SPA served from dist, Django API proxied on /server, /auth, /data, /trader routes, S3 for media and report storage.",
-				"CI/CD pipeline with GitHub Actions — automated deployment to Elastic Beanstalk on push to master, with AWS credentials managed via secrets.",
+				"Built a full-stack trading simulation platform to train commodity traders — traders play through historical market scenarios without seeing future prices, placing orders and managing risk under realistic constraints.",
+				"Core game loop: admin creates a simulation with a date range and products, trader starts the game, places trades on a ChartIQ chart, advances time day-by-day, and finishes when done — all positions auto-close at game end and performance stats are calculated.",
+				"Future data is strictly hidden — all API queries filter by the trader's current progress date, so they only see historical OHLCV data up to where they are in the simulation. No cheating, no backtesting.",
+				"Integrated ChartIQ 9.4 with custom plugins — Trading From Chart (TFC) for visual order placement, multi-chart grid layouts for cross-product analysis, and fundamental data reports (economic calendars, earnings) overlaid on the timeline.",
+				"Complete order engine — market, limit, stop, and MIT orders with bracket orders (OTO/OCO). On date progression, all pending orders batch-execute against the new day's High/Low data with randomized slippage and fixed commission costs.",
+				"Risk management enforced per simulation — $1M VAR and $1M notional exposure limits. VAR calculated using 20-day historical volatility at 95% confidence. If a trader's capital drops to zero, remaining orders cancel and positions auto-liquidate.",
+				"Post-game analytics dashboard — Sharpe ratio, Sortino ratio, Calmar ratio, hit ratio, profit ratio, max drawdown, average trade duration, and per-product P&L breakdowns. All calculated from daily cumulative P&L series.",
+				"Real-time stats during gameplay — live P&L (realized + unrealized), available VAR, available notional, open positions, and trade history update as the trader advances through the simulation.",
+				"Multi-product futures trading with contract expiry management — contracts auto-close on expiry date, symbol lookup with autocomplete, per-contract pip values and tick sizes for accurate lot sizing.",
+				"Custom QuoteFeed adapter that lazy-loads OHLCV data from the backend, caches fetched ranges per symbol, and only reveals new data as the trader progresses forward in time.",
+				"Deployed to AWS Elastic Beanstalk with Nginx reverse proxy — React SPA served from dist, Django API proxied on /server, /auth, /data, /trader routes, S3 for report storage and chart view persistence.",
+				"CI/CD pipeline with GitHub Actions — automated deployment to Elastic Beanstalk on push to master.",
 			],
-			architecture: "React + TypeScript SPA (Vite) with Redux Toolkit for state management, communicating via REST APIs to a Django + DRF backend. ChartIQ 9.4 handles all charting with custom plugins for data feeding (QuoteFeed), symbol search (LookupDriver), and trade execution (TFC). The backend runs a simulation engine that processes orders against historical OHLCV data — market orders fill immediately with randomized slippage, limit/stop orders match against daily High/Low on date progression. PostgreSQL stores all market data, orders, trades, and simulation state. Reports and chart view configs persist to S3. Nginx reverse proxy routes API traffic to Django (port 8000) and serves the React SPA. Deployed on AWS Elastic Beanstalk with GitHub Actions CI/CD.",
+			architecture: "React + TypeScript SPA (Vite) with Redux Toolkit for state management, communicating via REST APIs to a Django + DRF backend. ChartIQ 9.4 handles all charting with custom plugins for data feeding (QuoteFeed — strict date filtering to hide future data), symbol search (LookupDriver), and trade execution (TFC). The backend runs a simulation engine: on each date progression, it batch-executes pending orders against historical OHLCV High/Low data, applies slippage, enforces VAR/notional limits, and auto-liquidates if capital is breached. Post-game, the frontend calculates Sharpe, Sortino, Calmar, hit ratio, and max drawdown from the daily P&L series. PostgreSQL stores all market data, orders, trades, and simulation state. Reports persist to S3. Deployed on AWS Elastic Beanstalk with Nginx and GitHub Actions CI/CD.",
 			diagram: ETGArchDiagram,
-			media: [],
+			media: [
+				{
+					type: "image",
+					src: "/projects/airtrader/main_trading_view.png",
+					alt: "Main trading view",
+					caption: "Main trading view — ChartIQ candlestick chart with TFC order panel and P&L sidebar"
+				},
+				{
+					type: "image",
+					src: "/projects/airtrader/multi_chart.png",
+					alt: "Multi-chart grid",
+					caption: "Multi-chart grid — corn futures price alongside fundamental data reports"
+				},
+				{
+					type: "image",
+					src: "/projects/airtrader/order_placement.png",
+					alt: "Order placement",
+					caption: "Limit order placement with stop-loss and take-profit levels drawn on chart"
+				},
+				{
+					type: "image",
+					src: "/projects/airtrader/order_placement_2.png",
+					alt: "Order execution markers",
+					caption: "Executed order markers on price chart with trade history in sidebar"
+				},
+				{
+					type: "image",
+					src: "/projects/airtrader/order_placement_3.png",
+					alt: "Bracket order",
+					caption: "Bracket order (OTO/OCO) with visual price level indicators"
+				},
+				{
+					type: "image",
+					src: "/projects/airtrader/trade_history_and_positions_table.png",
+					alt: "Trade history",
+					caption: "Positions, open orders, and trade history with P&L breakdown"
+				},
+				{
+					type: "image",
+					src: "/projects/airtrader/pnl_chart.png",
+					alt: "P&L chart",
+					caption: "Daily P&L chart — bar chart with cumulative profit/loss line"
+				},
+				{
+					type: "image",
+					src: "/projects/airtrader/simulation_selection_page.png",
+					alt: "Simulation selection",
+					caption: "Simulation selection page — available and finished simulations"
+				},
+				{
+					type: "video",
+					src: "/projects/airtrader/record.mov",
+					alt: "Trading demo",
+					caption: "Live demo — advancing through dates, placing orders, and watching executions"
+				},
+			],
 		},
 	},
 	{
@@ -478,6 +535,110 @@ const projects = [
 	},
 ];
 
+function MediaGallery({media, projectTitle}) {
+	const [lightbox, setLightbox] = useState(null);
+
+	useEffect(() => {
+		if (lightbox === null) return;
+		const handleKey = (e) => {
+			if (e.key === "Escape") setLightbox(null);
+			if (e.key === "ArrowRight") setLightbox((p) => (p + 1) % media.length);
+			if (e.key === "ArrowLeft") setLightbox((p) => (p - 1 + media.length) % media.length);
+		};
+		window.addEventListener("keydown", handleKey);
+		return () => window.removeEventListener("keydown", handleKey);
+	}, [lightbox, media.length]);
+
+	return (
+		<div className="mt-8">
+			<h3 className="mb-4 text-sm font-black uppercase tracking-widest" style={{color: palette.red}}>
+				Screenshots & Demos
+			</h3>
+			<div className="grid gap-4 md:grid-cols-2">
+				{media.map((item, i) => (
+					<div key={i}
+					     className="cursor-pointer overflow-hidden rounded-2xl border-2 transition-transform hover:scale-[1.02]"
+					     style={{borderColor: palette.ink}}
+					     onClick={() => setLightbox(i)}>
+						{item.type === "video" ? (
+							<video src={item.src} className="w-full pointer-events-none" muted preload="metadata"/>
+						) : (
+							<img src={item.src} alt={item.alt || projectTitle} className="w-full"/>
+						)}
+						{item.caption && (
+							<div className="border-t-2 px-4 py-2 text-xs font-bold" style={{borderColor: palette.ink}}>
+								{item.caption}
+							</div>
+						)}
+					</div>
+				))}
+			</div>
+
+			<AnimatePresence>
+				{lightbox !== null && (
+					<motion.div
+						initial={{opacity: 0}} animate={{opacity: 1}} exit={{opacity: 0}}
+						className="fixed inset-0 z-[300] flex items-center justify-center"
+						style={{background: "rgba(0,0,0,0.92)"}}
+						onClick={() => setLightbox(null)}
+					>
+						<button
+							onClick={(e) => {
+								e.stopPropagation();
+								setLightbox(null);
+							}}
+							className="absolute right-4 top-4 z-10 rounded-full bg-white/10 p-2 text-white transition-colors hover:bg-white/20"
+						>
+							<X size={20}/>
+						</button>
+
+						{media.length > 1 && (
+							<>
+								<button
+									onClick={(e) => {
+										e.stopPropagation();
+										setLightbox((lightbox - 1 + media.length) % media.length);
+									}}
+									className="absolute left-4 z-10 rounded-full bg-white/10 p-3 text-white transition-colors hover:bg-white/20"
+								>
+									<ChevronLeft size={24}/>
+								</button>
+								<button
+									onClick={(e) => {
+										e.stopPropagation();
+										setLightbox((lightbox + 1) % media.length);
+									}}
+									className="absolute right-4 z-10 rounded-full bg-white/10 p-3 text-white transition-colors hover:bg-white/20"
+								>
+									<ChevronRight size={24}/>
+								</button>
+							</>
+						)}
+
+						<div className="flex max-h-[90vh] max-w-[90vw] flex-col items-center"
+						     onClick={(e) => e.stopPropagation()}>
+							{media[lightbox].type === "video" ? (
+								<video src={media[lightbox].src} controls autoPlay className="max-h-[80vh] rounded-lg"/>
+							) : (
+								<img src={media[lightbox].src} alt={media[lightbox].alt || projectTitle}
+								     className="max-h-[80vh] rounded-lg object-contain"/>
+							)}
+							{media[lightbox].caption && (
+								<div className="mt-3 text-center text-sm font-medium text-white/80">
+									{media[lightbox].caption}
+								</div>
+							)}
+							<div className="mt-2 text-xs text-white/40">
+								{lightbox + 1} / {media.length}
+							</div>
+						</div>
+					</motion.div>
+				)}
+			</AnimatePresence>
+		</div>
+	);
+}
+
 function ProjectDetailModal({project, onClose}) {
 	useEffect(() => {
 		const handleKey = (e) => e.key === "Escape" && onClose();
@@ -563,6 +724,10 @@ function ProjectDetailModal({project, onClose}) {
 					)}
 				</div>
 
+				{project.details?.media?.length > 0 && (
+					<MediaGallery media={project.details.media} projectTitle={project.title}/>
+				)}
+
 				{project.details?.architecture && (
 					<div className="mt-8">
 						<h3 className="text-sm font-black uppercase tracking-widest"
@@ -576,31 +741,6 @@ function ProjectDetailModal({project, onClose}) {
 								{React.createElement(project.details.diagram)}
 							</div>
 						)}
-					</div>
-				)}
-
-				{project.details?.media?.length > 0 && (
-					<div className="mt-8">
-						<h3 className="mb-4 text-sm font-black uppercase tracking-widest"
-						    style={{color: palette.red}}>Screenshots & Demos</h3>
-						<div className="grid gap-4 md:grid-cols-2">
-							{project.details.media.map((item, i) => (
-								<div key={i} className="overflow-hidden rounded-2xl border-2"
-								     style={{borderColor: palette.ink}}>
-									{item.type === "video" ? (
-										<video src={item.src} controls className="w-full" poster={item.poster}/>
-									) : (
-										<img src={item.src} alt={item.alt || project.title} className="w-full"/>
-									)}
-									{item.caption && (
-										<div className="border-t-2 px-4 py-2 text-xs font-bold"
-										     style={{borderColor: palette.ink}}>
-											{item.caption}
-										</div>
-									)}
-								</div>
-							))}
-						</div>
 					</div>
 				)}
 
@@ -742,7 +882,12 @@ const timeline = [
 		org: "Galen Data Inc.",
 		note: "Medical device cloud, 0→1 build"
 	},
-	{year: "2024", title: "Full Stack (Contract)", org: "ETG Commodities", note: "Trading interface in production"},
+	{
+		year: "2024",
+		title: "Full Stack (Contract)",
+		org: "ETG Commodities",
+		note: "Trader training simulator in production"
+	},
 	{
 		year: "2021",
 		title: "Full Stack Software Engineer",
