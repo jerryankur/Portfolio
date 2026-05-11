@@ -350,7 +350,50 @@ const projects = [
 			],
 			architecture: "Django ASGI backend (Daphne) serving both HTTP REST APIs and WebSocket connections. Five microservices run as dedicated async threads: ETHWhaleService subscribes to Ethereum node via WebSocket (newHeads + ERC20 Transfer logs), BTCWhaleService subscribes via ZMQ (hashblock). Both feed detected whale transactions into PostgreSQL with atomic writes, then broadcast confirmed transactions through Redis-backed Django Channels to all connected clients. TelegramService and XService consume from the same channel and batch-distribute alerts with rate-limit awareness. PriceService keeps live USD conversion rates. React + TypeScript frontend connects via WebSocket for real-time updates, with Redux Toolkit managing state and Material UI (Joy) for the interface.",
 			diagram: WhaleArchDiagram,
-			media: [],
+			media: [
+				{
+					type: "image",
+					src: "/projects/whale-monitoring/dashboard.png",
+					alt: "Whale alerts dashboard",
+					caption: "Live whale alerts feed"
+				},
+				{
+					type: "image",
+					src: "/projects/whale-monitoring/transaction_detail.png",
+					alt: "Transaction detail",
+					caption: "Transaction detail"
+				},
+				{
+					type: "image",
+					src: "/projects/whale-monitoring/token_filter.png",
+					alt: "Token filter",
+					caption: "Filter by token or assets"
+				},
+				{
+					type: "image",
+					src: "/projects/whale-monitoring/datetime_filter.png",
+					alt: "Date range filter",
+					caption: "Filter by date range"
+				},
+				{
+					type: "image",
+					src: "/projects/whale-monitoring/telegram_alert.png",
+					alt: "Telegram alerts",
+					caption: "Live Telegram bot alerts"
+				},
+				{
+					type: "image",
+					src: "/projects/whale-monitoring/bitcoind_service.png",
+					alt: "Bitcoin Core node",
+					caption: "Bitcoin Core full node"
+				},
+				{
+					type: "image",
+					src: "/projects/whale-monitoring/geth_service.png",
+					alt: "Geth node",
+					caption: "Geth Ethereum full node"
+				},
+			],
 		},
 	},
 	{
@@ -755,20 +798,35 @@ function ProjectDetailModal({project, onClose}) {
 
 function ProjectCard({project, index}) {
 	const [showDetail, setShowDetail] = useState(false);
+	const dragRef = useRef(false);
+	const handleCardClick = (e) => {
+		if (dragRef.current) return;
+		if (e.target.closest("a, button")) return;
+		setShowDetail(true);
+	};
 	return (
 		<>
 			<motion.div
 				drag
 				dragConstraints={{left: -100, right: 100, top: -50, bottom: 50}}
 				dragElastic={0.3}
+				onDragStart={() => {
+					dragRef.current = true;
+				}}
+				onDragEnd={() => {
+					setTimeout(() => {
+						dragRef.current = false;
+					}, 50);
+				}}
 				whileDrag={{scale: 1.05, rotate: 0, zIndex: 50, cursor: "grabbing"}}
 				whileHover={{scale: 1.02, rotate: 0}}
 				initial={{opacity: 0, y: 60, rotate: project.rotate}}
 				whileInView={{opacity: 1, y: 0, rotate: project.rotate}}
 				viewport={{once: true, margin: "-50px"}}
 				transition={{duration: 0.6, delay: index * 0.05}}
-				data-cursor="drag me"
-				className="relative cursor-grab select-none rounded-3xl border-[3px] p-7 shadow-[8px_8px_0px_0px_#1A0F08] md:p-8"
+				data-cursor="details"
+				onClick={handleCardClick}
+				className="relative cursor-pointer select-none rounded-3xl border-[3px] p-7 shadow-[8px_8px_0px_0px_#1A0F08] md:p-8"
 				style={{
 					background: project.color,
 					borderColor: palette.ink,
@@ -1033,10 +1091,11 @@ function GitHubActivity() {
 // ---------- Beyond Code ----------
 function BeyondCode() {
 	const items = [
-		{icon: "🏆", title: "Top 0.01%", note: "in coding competitions"},
-		{icon: "⚡", title: "Google Kickstart", note: "rank 1323 / 11400"},
-		{icon: "🧪", title: "Curious by default", note: "[hobby placeholder]"},
-		{icon: "📚", title: "Always learning", note: "[interest placeholder]"},
+		{icon: "🏆", title: "Top 0.01%", note: "in coding competitions during college"},
+		{icon: "🚗", title: "Classic Car Restorer", note: "part of car clubs, bringing old machines back to life"},
+		{icon: "🏔️", title: "Trekker", note: "mountains over meetings"},
+		{icon: "🎶", title: "Musician", note: "flute player, loves classical and country music"},
+		{icon: "📚", title: "Always learning", note: "quantum computing certification and whatever's next"},
 	];
 	return (
 		<section className="relative py-24 md:py-32" style={{background: palette.bg}}>
@@ -1053,7 +1112,7 @@ function BeyondCode() {
 						When I'm <span className="italic" style={{color: palette.orange}}>not shipping</span>.
 					</h2>
 				</div>
-				<div className="grid gap-6 md:grid-cols-4">
+				<div className="grid gap-6 md:grid-cols-5">
 					{items.map((it, i) => (
 						<motion.div
 							key={i}
