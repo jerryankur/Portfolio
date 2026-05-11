@@ -1,4 +1,4 @@
-import React from "react";
+import "react";
 
 const palette = {
 	bg: "#FFF4E6",
